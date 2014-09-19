@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <style>
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v2.0.0.js"></script>
+    <script>
+        $(function() {
+        var source = $("#template1").html();
+        var template = Handlebars.compile(source);
+        var data = {};
+        var refreshView = function() {
+            
+            var html = template(data);
+            $(".output").html(html);
+                        console.log("refreshView done")
+
+        };
+
+
+
+        $('#getfollowers').on('click', function  () {
+            // body...
+                var handle = $("#handle").val();
+             $.ajax("/api/twitter/" + handle + "/followers" ).then(function(list) {
+                                            data.context = list;
+                                            console.log("followers populated");
+                                            refreshView();
+                    });
+
+        });
+
+        $('#getfriends').on('click', function  () {
+            // body...
+                var handle = $("#handle").val();
+             
+                 $.ajax("/api/twitter/" + handle + "/friends" ).then(function(frs) {
+                    data.context = frs;
+                    console.log("friends populated")
+                    refreshView();
+
+                });
+        });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+
+<body>
+    <!-- Twitter Handle -->
+        <div class="row">
+         <div class="col-md-4"></div>
+         <div class="col-md-4">                     
+                <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon">@</div>
+                    <input class="form-control" id="handle" type="text" placeholder="Twitter">
+                </div>
+            </div>
+         </div>
+         <div class="col-md-4"></div>
+        </div>
+
+    <!-- BUTTONS -->    
+        <div class="row">
+         <div class="col-md-4"></div>
+         <div class="col-md-4">                     
+                <button type="button" id="getfollowers" class="btn btn-info">Followers</button>
+                <button type="button" id="getfriends" class="btn btn-info">Friends</button>
+         </div>
+         <div class="col-md-4"></div>
+        </div>
+
+
+        <div class="output"></div>
+        <script id="template1" type="text/x-handlebars-template">
+            <table class="table table-striped">
+                <tr>
+                    <th>handle</th>
+                    <th>name</th>
+                </tr>
+                {{#each context}}
+                <tr data-code="{{id}}" >
+
+                    <td>@ {{handle}}</td>
+                    <td>{{name}}</td>
+
+                </tr>
+
+                {{/each}}
+
+                </table>
+        </script>
+</body>
+
+</html>
+
